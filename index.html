@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Studio - Appar som förenklar livet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #000000;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 100px 20px 80px;
+            background: linear-gradient(180deg, #000000 0%, #0a0a0a 100%);
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 0%, rgba(100, 100, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ffffff 0%, #888 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            letter-spacing: -2px;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: #999;
+            margin-bottom: 15px;
+            font-weight: 300;
+        }
+
+        .hero-description {
+            font-size: 1.1rem;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .category-nav {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            padding: 30px 20px;
+            background: #0a0a0a;
+            border-bottom: 1px solid #1a1a1a;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .category-btn {
+            padding: 12px 28px;
+            background: transparent;
+            border: 1px solid #333;
+            color: #999;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .category-btn:hover, .category-btn.active {
+            background: rgba(255,255,255,0.1);
+            border-color: #666;
+            color: #fff;
+        }
+
+        .products-section {
+            padding: 60px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .section-description {
+            font-size: 1.1rem;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .products-container {
+            display: flex;
+            gap: 30px;
+            padding: 20px 50px;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: #333 transparent;
+        }
+
+        .products-container::-webkit-scrollbar {
+            height: 10px;
+        }
+
+        .products-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .products-container::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 5px;
+        }
+
+        .product-card {
+            min-width: 340px;
+            height: 450px;
+            background: linear-gradient(145deg, #1a1a1a 0%, #0d0d0d 100%);
+            border-radius: 24px;
+            padding: 35px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid #222;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card.featured {
+            min-width: 400px;
+            height: 500px;
+            border: 2px solid #444;
+        }
+
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-12px);
+            border-color: #555;
+            box-shadow: 0 25px 50px rgba(255,255,255,0.1);
+        }
+
+        .product-card:hover::before {
+            opacity: 1;
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 6px 14px;
+            background: rgba(100, 100, 255, 0.2);
+            border: 1px solid rgba(100, 100, 255, 0.3);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #aaf;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .product-badge.new {
+            background: rgba(100, 255, 100, 0.2);
+            border-color: rgba(100, 255, 100, 0.3);
+            color: #afa;
+        }
+
+        .product-icon {
+            font-size: 4.5rem;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .product-card.featured .product-icon {
+            font-size: 5.5rem;
+        }
+
+        .product-card h3 {
+            font-size: 1.75rem;
+            margin-bottom: 15px;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .product-card.featured h3 {
+            font-size: 2rem;
+        }
+
+        .product-card p {
+            color: #aaa;
+            line-height: 1.7;
+            flex-grow: 1;
+            font-size: 0.95rem;
+        }
+
+        .product-type {
+            display: inline-block;
+            padding: 8px 18px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #999;
+            margin-top: 15px;
+            font-weight: 500;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: linear-gradient(145deg, #1a1a1a 0%, #0d0d0d 100%);
+            padding: 50px;
+            border-radius: 30px;
+            max-width: 700px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            border: 1px solid #333;
+            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 2.5rem;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: none;
+            border: none;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .close-btn:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .modal-icon {
+            font-size: 5rem;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .modal-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            background: rgba(100, 255, 100, 0.2);
+            border: 1px solid rgba(100, 255, 100, 0.3);
+            color: #afa;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .modal-content .price {
+            font-size: 2.2rem;
+            color: #4CAF50;
+            margin: 25px 0;
+            font-weight: 700;
+        }
+
+        .modal-content .description {
+            color: #bbb;
+            line-height: 1.9;
+            margin-bottom: 30px;
+            font-size: 1.05rem;
+        }
+
+        .features {
+            margin: 30px 0;
+        }
+
+        .features h4 {
+            color: #fff;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .features ul {
+            list-style: none;
+            color: #aaa;
+        }
+
+        .features li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #4CAF50;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .highlight-box {
+            background: rgba(100, 100, 255, 0.1);
+            border: 1px solid rgba(100, 100, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 25px 0;
+        }
+
+        .highlight-box h4 {
+            color: #aaf;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .highlight-box p {
+            color: #999;
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+
+        .buy-btn {
+            width: 100%;
+            padding: 20px;
+            font-size: 1.2rem;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 700;
+            margin-top: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .buy-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 40px rgba(76, 175, 80, 0.4);
+        }
+
+        .buy-btn.secondary {
+            background: linear-gradient(135deg, #555 0%, #333 100%);
+        }
+
+        .buy-btn.secondary:hover {
+            box-shadow: 0 15px 40px rgba(255, 255, 255, 0.2);
+        }
+
+        footer {
+            text-align: center;
+            padding: 60px 20px;
+            color: #555;
+            border-top: 1px solid #1a1a1a;
+            margin-top: 80px;
+        }
+
+        footer p {
+            margin-bottom: 10px;
+        }
+
+        .footer-links {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: #666;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #999;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .category-nav {
+                overflow-x: auto;
+                justify-content: flex-start;
+            }
+            
+            .product-card, .product-card.featured {
+                min-width: 300px;
+                height: 420px;
+            }
+            
+            .modal-content {
+                padding: 35px 25px;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <div class="hero-content">
+            <h1>Digital Studio</h1>
+            <p class="hero-subtitle">Appar & verktyg som förenklar din tillvaro</p>
+            <p class="hero-description">
+                Från AI-assistenter till sport, business och personlig utveckling - upptäck lösningar som faktiskt gör livet lättare.
+            </p>
+        </div>
+    </div>
+
+    <nav class="category-nav">
+        <button class="category-btn active" onclick="filterCategory('all')">Alla Produkter</button>
+        <button class="category-btn" onclick="filterCategory('ai')">🤖 AI & Assistenter</button>
+        <button class="category-btn" onclick="filterCategory('sport')">⚽ Sport</button>
+        <button class="category-btn" onclick="filterCategory('business')">💼 Business</button>
+        <button class="category-btn" onclick="filterCategory('livskvalitet')">🌟 Livskvalitet</button>
+    </nav>
+
+    <!-- AI & ASSISTENTER -->
+    <div class="products-section" data-category="ai">
+        <div class="section-header">
+            <h2 class="section-title">🤖 AI & Smarta Assistenter</h2>
+            <p class="section-description">Intelligenta verktyg som lär känna dig och blir smartare med tiden</p>
+        </div>
+        <div class="products-container">
+            <div class="product-card featured" onclick="openModal('mimer')">
+                <span class="product-badge">FLAGGSKEPP</span>
+                <div class="product-icon">🧠</div>
+                <h3>Mimer</h3>
+                <p>Din personliga AI-assistent med permanent minne. 4 specialiserade AI-modeller, smart routing och proaktiva förslag. Blir smartare för varje användare genom kollektiv intelligens.</p>
+                <span class="product-type">AI-ASSISTENT</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SPORT & AKTIVITET -->
+    <div class="products-section" data-category="sport">
+        <div class="section-header">
+            <h2 class="section-title">⚽ Sport & Aktivitet</h2>
+            <p class="section-description">Allt du behöver för att bli en bättre boule-spelare</p>
+        </div>
+        <div class="products-container">
+            <div class="product-card" onclick="openModal('book')">
+                <div class="product-icon">📚</div>
+                <h3>Petanque - Den Kompletta Guiden</h3>
+                <p>En omfattande guide till petanque med teknik, strategi, regler och mental träning.</p>
+                <span class="product-type">BOK</span>
+            </div>
+
+            <div class="product-card" onclick="openModal('training')">
+                <div class="product-icon">💪</div>
+                <h3>Boule Träningsapp</h3>
+                <p>Förbättra din teknik med strukturerade träningsprogram och övningar.</p>
+                <span class="product-type">APP</span>
+            </div>
+
+            <div class="product-card" onclick="openModal('tournament')">
+                <div class="product-icon">🏆</div>
+                <h3>Turneringsapp</h3>
+                <p>Organisera och delta i turneringar. Håll koll på resultat och ranking.</p>
+                <span class="product-type">APP</span>
+            </div>
+
+            <div class="product-card" onclick="openModal('social')">
+                <div class="product-icon">👥</div>
+                <h3>Social Boule App</h3>
+                <p>Anslut med andra spelare, hitta matcher och dela dina framgångar.</p>
+                <span class="product-type">APP</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- BUSINESS TOOLS -->
+    <div class="products-section" data-category="business">
+        <div class="section-header">
+            <h2 class="section-title">💼 Business Tools</h2>
+            <p class="section-description">Verktyg som gör företagandet enklare</p>
+        </div>
+        <div class="products-container">
+            <div class="product-card" onclick="openModal('ebrevsmotor')">
+                <div class="product-icon">📧</div>
+                <h3>Ebrevsmotor</h3>
+                <p>E-postmarknadsföring som är enklare och mer användarvänlig än Mailchimp.</p>
+                <span class="product-type">SAAS</span>
+            </div>
+
+            <div class="product-card" onclick="openModal('bokforing')">
+                <div class="product-icon">📊</div>
+                <h3>Bokföringsapp för Föreningar</h3>
+                <p>Enkel bokföring specifikt anpassad för föreningar och ideella organisationer.</p>
+                <span class="product-type">APP</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- LIVSKVALITET -->
+    <div class="products-section" data-category="livskvalitet">
+        <div class="section-header">
+            <h2 class="section-title">🌟 Livskvalitet & Personlig Utveckling</h2>
+            <p class="section-description">Verktyg för självkännedom och personlig tillväxt</p>
+        </div>
+        <div class="products-container">
+            <div class="product-card" onclick="openModal('iris')">
+                <span class="product-badge new">NYTT</span>
+                <div class="product-icon">🔮</div>
+                <h3>Iris</h3>
+                <p>Holistisk app för självkännedom med astrologi, färganalys, tarotkort och numerologi.</p>
+                <span class="product-type">APP</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALER -->
+    
+    <!-- MIMER MODAL -->
+    <div id="modal-mimer" class="modal" onclick="closeModal('mimer')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="close-btn" onclick="closeModal('mimer')">×</button>
+            <div class="modal-icon">🧠</div>
+            <h2>Mimer</h2>
+            <span class="modal-badge">REVOLUTIONERANDE AI</span>
+            <div class="price">99 kr/månad</div>
+            <div class="description">
+                Mimer är inte bara en AI-assistent - det är din digitala andra hjärna. Med 4 specialiserade AI-modeller, smart routing och permanent minne blir Mimer den assistent som verkligen lär känna dig.
+            </div>
+            
+            <div class="highlight-box">
+                <h4>🚀 Unik Nätverkseffekt</h4>
+                <p>Mimer blir smartare för varje användare! Tack vare avancerad cache-teknologi får du blixtsnabba svar på vanliga frågor - 10x snabbare än vanliga AI-assistenter. Ju fler som använder Mimer, desto smartare blir den.</p>
+            </div>
+
+            <div class="features">
+                <h4>Funktioner:</h4>
+                <ul>
+                    <li>4 specialiserade AI-modeller för olika uppgifter</li>
+                    <li>Smart routing som skickar frågor till rätt specialist</li>
+                    <li>Agent för komplexa uppgifter och problemlösning</li>
+                    <li>Permanent minne - både allmän och personlig databas</li>
+                    <li>Proaktiva förslag baserat på dina behov</li>
+                    <li>Anpassningsbar (VD-assistent, lärarstöd, mekanikerkompis m.m.)</li>
+                    <li>Personlig morgonrapport med nyheter och dina intressen</li>
+                    <li>Blir smartare ju längre du använder den</li>
+                </ul>
+            </div>
+
+            <div class="highlight-box">
+                <h4>🔒 GDPR & Integritet</h4>
+                <p>Din personliga data är endast din. Du kan när som helst radera alla dina personliga uppgifter. Kollektiv kunskap är anonymiserad och du kan opt-out.</p>
+            </div>
+
+            <button class="buy-btn" onclick="alert('Snart lanseras Mimer! Vill du få early access?')">Kom Igång</button>
+        </div>
+    </div>
+
+    <!-- PETANQUE BOK MODAL -->
+    <div id="modal-book" class="modal" onclick="closeModal('book')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="close-btn" onclick="closeModal('book')">×</button>
+            <div class="modal-icon">📚</div>
+            <h2>Petanque - Den Kompletta Guiden</h2>
+            <div class="price">249 kr</div>
+            <div class="description">
+                En omfattande bok som tar dig från nybörjare till avancerad spelare. Lär dig allt om petanque - teknik, taktik, regler och mentalt spel.
+            </div>
+            <div class="features">
+                <h4>Innehåll:</h4>
+                <ul>
+                    <li>Grundläggande teknik och kast</li>
+                    <li>Avancerade strategier för tävlingsspel</li>
+                    <li>Officiella regler och turneringsformat</li>
+                    <li>Mentalt spel och tävlingspsykologi</li>
+                    <li>Utrustningsguide och materialkunskap</li>
+                    <li>Träningsprogram för alla nivåer</li>
+                </ul>
+            </div>
+            <button class="buy-btn" onclick="alert('Betalning för boken öppnas här!')">Köp Nu</button>
+        </div>
+    </div>
+
+    <!-- TRÄNINGSAPP MODAL -->
+    <div id="modal-training" class="modal" onclick="closeModal('training')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="close-btn" onclick="closeModal('training')">×</button>
+            <div class="modal-icon">💪</div>
+            <h2>Boule Träningsapp</h2>
+            <div class="price">99 kr/månad</div>
+            <div class="description">
+                Strukturerade träningsprogram som hjälper dig utveckla din teknik systematiskt. Perfekt för alla nivåer.
+            </div>
+            <div class="features">
+                <h4>Funktioner:</h4>
+                <ul>
+                    <li>Personliga träningsprogram anpassade efter din nivå</li>
+                    <li>Video-instruktioner från erfarna spelare</li>
+                    <li>Spåra din progression över tid</li>
+                    <li>Dagliga övningar och utmaningar</li>
+                    <li>Teknisk analys och feedback</li>
+                    <li>Community med andra träningsfokuserade spelare</li>
+                </ul>
+            </div>
+            <button class="buy-btn" onclick="alert('Prenumeration startas här!')">Prenumerera</button>
+        </div>
+    </div>
+
+    <!-- TURNERINGSAPP MODAL -->
+    <div id="modal-tournament" class="modal" onclick="closeModal('tournament')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="close-btn" onclick="closeModal('tournament')">×</button>
+            <div class="modal-icon">🏆</div>
+            <h2>Turneringsapp</h2>
+            <div class="price">149 kr</div>
+            <div class="description">
+                Komplett lösning för att organisera och delta i bouleturneringar. Håll koll på alla matcher och resultat.
+            </div>
+            <div class="features">
+                <h4>Funktioner:</h4>
+                <ul>
+                    <li>Skapa och administrera turneringar enkelt</li>
+                    <li>Automatisk lottning och schemaläggning</li>
+                    <li>Live-resultat och realtids-ranking</li>
+                    <li>Omfattande statistik och historik</li>
+                    <li>Dela turneringar med alla deltagare</li>
+                    <li>Olika turneringsformat (knock-out, round-robin m.m.)</li>
+                </ul>
+            </div>
+            <button class="buy-btn" onclick="alert('Köp turneringsappen här!')">Köp Nu</button>
+        </div>
+    </div>
+
+    <!-- SOCIAL APP MODAL -->
+    <div id="modal-social" class="modal" onclick="closeModal('social')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="close-btn" onclick="closeModal('social')">×</button>
+            <div class="modal-icon">👥</div>
+            <h2>Social Boule App</h2>
+            <div class="price">Gratis</div>
+            <div class="description">
+                Anslut med boule-communityn! Hitta spelare i din närhet, organisera matcher och dela dina bästa stunder.
+            </div>
+            <div class="features">
+                <h4>Funktioner:</h4>
+                <ul>
+                    <li>Hitta spelare och klubbar i din närhet</li>
+                    <li>Schemalägg spontana matcher</li>
+                    <li>Dela foton och resultat från dina matcher</li>
+                    <li>Chatfunktion för att koordinera spel</li>
+                    <li>Event-kalender med lokala turneringar</li>
+                    <li>Ranking och achievements</li>
+                </ul>
+            </div>
+            <button class="buy-btn secondary" onclick="alert('Ladda ner appen här!')">Ladda Ner</button>
+        </div>
+    </div>
+
+    <!-- EBREVSMOTOR MODAL -->
+    <div id="modal-ebrevsmotor" class="modal" onclick="closeModal('ebrevsmotor')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="close-btn" onclick="closeModal('ebrevsmotor')">×</button>
+            <div class="modal-icon">📧</div>
+            <h2>Ebrevsmotor</h2>
+            <div class="price">Från 199 kr/månad</div>
+            <div class="description">
+                E-postmarknadsföring som faktiskt är enkel att använda. Mer användarvänlig än Mailchimp, med all funktionalitet du behöver.
+            </div>
+            <div class="features">
+                <h4>Funktioner:</h4>
+                <ul>
+                    <li>Intuitivt gränssnitt - enklare än konkurrenterna</li>
+                    <li>Professionella mallar och drag-and-drop editor</li>
+                    <li>Avancerad segmentering av mottagare</li>
+                    <li>Automatiserade kampanjer och drip-serier</li>
+                    <li>Detaljerad statistik och A/B-testning</li>
+                    <li>GDPR-compliant och svenskt</li>
+                    <li>Fantastisk support på svenska</li>
+                </ul>
+            </div>
+            <button class="buy-btn" onclick="alert('Starta din gratisperiod här!')">Prova Gratis</button>
+        </div>
+    </div>
+
+    <!-- BOKFÖRINGSAPP MODAL -->
+    <div id="modal-bokforing" class="modal" onclick="closeModal('bokforing')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="close-btn" onclick="closeModal('bokforing')">×</button>
+            <div class="modal-icon">📊</div>
+            <h2>Bokföringsapp för Föreningar</h2>
+            <div class="price">299 kr/månad</div>
+            <div class="description">
+                Bokföring utan huvudvärk! Speciellt utvecklad för föreningar och ideella organisationer med allt ni behöver.
+            </div>
+            <div class="features">
+                <h4>Funktioner:</h4>
+                <ul>
+                    <li>Anpassad för svenska föreningar och lagar</li>
+                    <li>Medlemsavgifter och betalningshantering</li>
+                    <li>Enkel kvittohantering och utlägg</li>
+                    <li>Årsredovisning och rapporter</li>
+                    <li>Budgetplanering och uppföljning</li>
+                    <li>Revisionsrapporter klara att skriva ut</li>
+                    <li>Flera användare med olika behörigheter</li>
+                </ul>
+            </div>
+            <button class="buy-btn" onclick="alert('Kom igång med bokföring här!')">Starta Nu</button>
+        </div>
+    </div>
+
+    <!-- IRIS MODAL -->
+    <div id="modal-iris" class="modal" onclick="closeModal('iris')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="close-btn" onclick="closeModal('iris')">×</button>
+            <div class="modal-icon">🔮</div>
+            <h2>Iris</h2>
+            <div class="price">149 kr/månad</div>
+            <div class="description">
+                Din holistiska guide till självkännedom. Iris kombinerar astrologi, färganalys, tarot och numerologi för djupare insikter om dig själv.
+            </div>
+            <div class="features">
+                <h4>Funktioner:</h4>
+                <ul>
+                    <li>Personlig astrologisk analys baserad på ditt födelseschema</li>
+                    <li>Färganalys som visar din personliga färgpalett</li>
+                    <li>Interaktiva tarotkort-läggningar med tolkningar</li>
+                    <li>Numerologisk analys av ditt namn och födelsedatum</li>
+                    <li>Dagliga insikter och guider</li>
+                    <li>Holistisk tolkning som kopplar samman allt</li>
+                    <li>Spara och följ din personliga utvecklingsresa</li>
+                </ul>
+            </div>
+            <button class="buy-btn" onclick="alert('Upptäck dig själv med Iris!')">Kom Igång</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Digital Studio. Alla rättigheter förbehållna.</p>
+        <div class="footer-links">
+            <a href="#privacy">Integritetspolicy</a>
+            <a href="#terms">Användarvillkor</a>
+            <a href="#contact">Kontakt</a>
+            <a href="#about">Om Oss</a>
+        </div>
+    </footer>
+
+    <script>
+        function openModal(type) {
+            document.getElementById('modal-' + type).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(type) {
+            document.getElementById('modal-' + type).classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function filterCategory(category) {
+            const sections = document.querySelectorAll('.products-section');
+            const buttons = document.querySelectorAll('.category-btn');
+            
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (category === 'all') {
+                sections.forEach(section => section.style.display = 'block');
+            } else {
+                sections.forEach(section => {
+                    if (section.dataset.category === category) {
+                        section.style.display = 'block';
+                    } else {
+                        section.style.display = 'none';
+                    }
+                });
+            }
+        }
+
+        // Stäng modal med Escape
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.classList.remove('active');
+                });
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        // Smooth scroll för horisontella containrar
+        document.querySelectorAll('.products-container').forEach(container => {
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            container.addEventListener('mousedown', (e) => {
+                isDown = true;
+                startX = e.pageX - container.offsetLeft;
+                scrollLeft = container.scrollLeft;
+            });
+
+            container.addEventListener('mouseleave', () => {
+                isDown = false;
+            });
+
+            container.addEventListener('mouseup', () => {
+                isDown = false;
+            });
+
+            container.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - container.offsetLeft;
+                const walk = (x - startX) * 2;
+                container.scrollLeft = scrollLeft - walk;
+            });
+        });
+    </script>
+</body>
+</html>
